@@ -14,20 +14,15 @@ Colección de scripts y herramientas ligeras en **Python** y **Bash** diseñadas
 | Script | Lenguaje | Descripción |
 | :--- | :--- | :--- |
 | **`notificacion_matutina.py`** | Python 3 | Clima local por geolocalización IP y cotización del Dólar (Oficial, Blue, MEP). |
+| **`cancion_actual.sh`** | Bash | Consulta bajo demanda qué canción está sonando en cualquier reproductor (Brave, Spotify, Firefox, VLC). |
 | **`limpieza_de_sistema.sh`** | Bash | Mantenimiento seguro: limpia Flatpaks huérfanos, logs viejos de systemd, caché DNF y miniaturas. |
-| **`reporte_apps.sh`** | Bash | Genera un inventario en Markdown para Obsidian con paquetes RPM, Flatpaks y AppImages. |
+| **`reporte_apps.sh`** | Bash | Genera un inventario en Markdown para Obsidian con paquetes del sistema, Flatpaks y AppImages. |
 
 ---
 
 ## 1. Notificación Matutina (Clima y Dólar)
 
 Script modular sin dependencias externas que obtiene información en tiempo real y la muestra tanto en consola como en una notificación nativa de escritorio (`notify-send`).
-
-### Características
-* **Detección automática de ubicación:** Identifica la ciudad por IP mediante `wttr.in`.
-* **Datos meteorológicos:** Temperatura actual, sensación térmica (ST), mínima/máxima del día y condición del cielo.
-* **Cotizaciones en vivo:** Dólar Oficial, Blue y MEP vía `dolarapi.com`.
-* **Sin dependencias externas:** No requiere `pip install`, utiliza la biblioteca estándar de Python.
 
 ### Uso
 ```bash
@@ -41,30 +36,39 @@ Script modular sin dependencias externas que obtiene información en tiempo real
 ./notificacion_matutina.py dolar
 ```
 
-### Alias recomendados en Shell
-* **Fish (`~/.config/fish/config.fish`):**
+---
+
+## 2. Consulta de Canción Actual (`cancion_actual.sh`)
+
+Script bajo demanda para consultar instantáneamente el título y artista de la música que se está reproduciendo en el sistema.
+
+### Características
+* **Detección automática de reproductor:** Detecta automáticamente Brave, Spotify, Firefox, VLC o cualquier reproductor compatible con MPRIS.
+* **Soporte para reproductor específico:** Permite especificar un reproductor por argumento.
+* **Notificación de escritorio:** Muestra una tarjeta emergente y se cierra inmediatamente sin consumir recursos en segundo plano.
+
+### Uso
+```bash
+# Detectar cualquier reproductor activo:
+./cancion_actual.sh
+
+# Consultar un reproductor específico (ejemplo Brave o Spotify):
+./cancion_actual.sh brave
+./cancion_actual.sh spotify
+```
+
+### Alias y Atajo de Teclado
+* **Atajo en KDE / GNOME:** Asignar una combinación de teclas (ejemplo: `Meta + M`) a la orden `/ruta/al/script/cancion_actual.sh` para ver la canción actual desde cualquier ventana o juego.
+* **Alias en Fish (`~/.config/fish/config.fish`):**
   ```fish
-  alias clima "/ruta/al/script/notificacion_matutina.py clima"
-  alias dolar "/ruta/al/script/notificacion_matutina.py dolar"
-  ```
-* **Bash / Zsh (`~/.bashrc` o `~/.zshrc`):**
-  ```bash
-  alias clima="/ruta/al/script/notificacion_matutina.py clima"
-  alias dolar="/ruta/al/script/notificacion_matutina.py dolar"
+  alias tema "/ruta/al/script/cancion_actual.sh"
   ```
 
 ---
 
-## 2. Limpieza Segura del Sistema (`limpieza_de_sistema.sh`)
+## 3. Limpieza Segura del Sistema (`limpieza_de_sistema.sh`)
 
 Script de mantenimiento diseñado para liberar espacio en disco de forma segura sin desinstalar dependencias del sistema.
-
-### Acciones que realiza:
-1. Elimina runtimes y dependencias en desuso de Flatpak (`flatpak uninstall --unused`).
-2. Purga registros antiguos del sistema reduciendo `journalctl` a los últimos 2 días.
-3. Limpia paquetes descargados temporales de DNF (`dnf clean packages`).
-4. Vacía la caché de miniaturas de imágenes y videos (`~/.cache/thumbnails/`).
-5. Emite una notificación de escritorio al finalizar.
 
 ### Uso
 ```bash
@@ -73,14 +77,9 @@ Script de mantenimiento diseñado para liberar espacio en disco de forma segura 
 
 ---
 
-## 3. Reporte de Software para Obsidian (`reporte_apps.sh`)
+## 4. Reporte de Software para Obsidian (`reporte_apps.sh`)
 
 Genera un documento Markdown (`.md`) estructurado con frontmatter YAML que lista el software instalado por el usuario en el sistema.
-
-### Secciones generadas:
-* Paquetes de sistema instalados explícitamente (`dnf`, `pacman` o `apt`).
-* Aplicaciones Flatpak con nombre, versión e identificador.
-* Escaneo de archivos AppImage en directorios locales.
 
 ### Uso
 ```bash
@@ -109,6 +108,7 @@ Genera un documento Markdown (`.md`) estructurado con frontmatter YAML que lista
 3. **Requisitos:**
    * Python 3
    * `libnotify` (`notify-send`)
+   * `playerctl` (para el control de música)
 
 ---
 
